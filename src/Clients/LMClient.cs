@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using AutoDoc.Models;
 using System.Text.Json;
+using AutoDoc.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -9,7 +10,7 @@ namespace AutoDoc.Clients
     {
         private static readonly HttpClient _httpClient = new()
         {
-            Timeout = TimeSpan.FromSeconds(9500)
+            Timeout = TimeSpan.FromSeconds(10_000)
         };
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -58,33 +59,17 @@ namespace AutoDoc.Clients
             logger?.LogInformation("Start for date: {Date} | Total commits: {Count}",
                     date.ToShortDateString(), totalCount);
 
-            foreach (var processCommits in Chunk(totalCommitsByDate))
+            foreach (var processCommits in totalCommitsByDate.Chunk())
             {
                 logger?.LogInformation("Process: {Count}º commits", processCommits.Length);
 
                 var reports = await CallModelAsync(processCommits, logger, ct);
                 reportsByDate = reportsByDate.Concat(reports);
 
-                await Task.Delay(totalCount * 3000, ct);
+                await totalCount.DelayAsync(multiplier: 3000, ct);
             }
 
             return reportsByDate;
-        }
-
-        private static IEnumerable<MyCommit[]> Chunk(
-            IEnumerable<MyCommit> totalCommitsByDate)
-        {
-            if (totalCommitsByDate is null || !totalCommitsByDate.Any())
-                return [];
-
-            var totalCount = totalCommitsByDate.Count();
-
-            if (totalCount < 3)
-                return [[.. totalCommitsByDate]];
-
-            return totalCount < 10
-                ? totalCommitsByDate.Chunk(totalCount / 3)
-                : totalCommitsByDate.Chunk(totalCount / 5);
         }
 
         private static async Task<Report[]> CallModelAsync(

@@ -8,8 +8,8 @@ namespace AutoDoc
     {
         static async Task Main(string[] args)
         {
-            if (!InputValidator.IsValid(args, out DateTime start, out DateTime end))
-                throw new ArgumentException("Por favor insira [DataInicio] [DataFim]");
+            if (!InputValidator.TryGetDates(args, out DateTime start, out DateTime end))
+                throw new ArgumentException(Constants.InputError);
 
             var logger = GetLogger();
 

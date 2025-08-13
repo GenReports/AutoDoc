@@ -17,7 +17,8 @@ namespace AutoDoc.Clients
             foreach (var commit in repo.Commits
                 .Where(c => c.Author.Email == Email &&
                             c.Author.When.DateTime >= start &&
-                            c.Author.When.DateTime <= end))
+                            c.Author.When.DateTime <= end)
+                .OrderBy(c => c.Author.When.DateTime))
             {
                 commits.Add(new MyCommit
                 {
@@ -26,8 +27,8 @@ namespace AutoDoc.Clients
                     CreatedAt = commit.Author.When.DateTime
                 });
             }
-
-            return commits.OrderBy(c => c.CreatedAt);
+          
+            return commits;
         }
     }
 }

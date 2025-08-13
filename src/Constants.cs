@@ -2,6 +2,11 @@
 {
     internal static class Constants
     {
+        public const string InputError =
+           @"Por favor insira os argumentos corretos. 
+           1º opção: [DataInicio] [DataFim] | Exemplo: 2025-01-01 2025-02-01 | Explicação: irá gerar 1 mês de relatórios
+           2º opção: [Dias] | Exemplo: 7  | Explicação: irá gerar 1 semana de relatórios a partir da data atual";
+
         public const string Context =
             @"Você é um assistente especializado em converter mensagens de commits em relatórios técnicos organizados.
             O projeto se chama 'Nice Acesso', um sistema de controle de acesso com equipamentos como Guarita (MG3000), Controladora Ethernet, Facial, Biometria, Relês e Acionadores. 

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using AutoDoc.Models;
 using System.Text.Json;
+using AutoDoc.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -9,7 +10,7 @@ namespace AutoDoc.Clients
     {
         private static readonly HttpClient _httpClient = new()
         {
-            Timeout = TimeSpan.FromSeconds(9500)
+            Timeout = TimeSpan.FromSeconds(10_000)
         };
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -17,25 +18,25 @@ namespace AutoDoc.Clients
             PropertyNameCaseInsensitive = true,
         };
 
-        public const string CompletionsUri = "http://localhost:1234/v1/chat/completions";
-
-        public static async Task<IEnumerable<Report[]>> GenerateReportsAsync(
+        public static async Task<IEnumerable<IEnumerable<Report>>> GenerateReportsAsync(
             IEnumerable<MyCommit> commits,
+            string modelContext,
             ILogger<Program>? logger,
-            CancellationToken ct = default)
+            AppSettings appSettings,
+            CancellationToken ct)
         {
-            if (commits is null || !commits.Any())
+            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
                 return [];
 
-            var chunkReports = new List<Report[]>();
+            var chunkReports = new List<IEnumerable<Report>>();
             var dates = commits.Select(c => c.CreatedAt.Date).Distinct();
 
             foreach (var date in dates)
             {
-                var reportsByDate = await GetReportsByDateAsync(commits, date, logger, ct);
-                await CsvClient.CreateAsync(reportsByDate, logger, ct);
+                var reportsByDate = await GetReportsByDateAsync(commits, modelContext, date, logger, appSettings, ct);
+                await CsvClient.CreateAsync(reportsByDate, logger, appSettings, ct);
 
-                chunkReports.Add([.. reportsByDate]);
+                chunkReports.Add(reportsByDate);
             }
 
             return chunkReports;
@@ -43,11 +44,13 @@ namespace AutoDoc.Clients
 
         private static async Task<IEnumerable<Report>> GetReportsByDateAsync(
             IEnumerable<MyCommit> commits,
+            string modelContext,
             DateTime date,
             ILogger<Program>? logger,
+            AppSettings appSettings,
             CancellationToken ct)
         {
-            if (commits is null || !commits.Any())
+            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
                 return [];
 
             IEnumerable<Report> reportsByDate = [];
@@ -58,46 +61,32 @@ namespace AutoDoc.Clients
             logger?.LogInformation("Start for date: {Date} | Total commits: {Count}",
                     date.ToShortDateString(), totalCount);
 
-            foreach (var processCommits in Chunk(totalCommitsByDate))
+            foreach (var processCommits in totalCommitsByDate.Chunk())
             {
-                logger?.LogInformation("Process: {Count}º commits", processCommits.Length);
+                logger?.LogInformation("Process: {Count}º commits", processCommits.Count());
 
-                var reports = await CallModelAsync(processCommits, logger, ct);
+                var reports = await CallModelAsync(processCommits, modelContext, logger, appSettings, ct);
                 reportsByDate = reportsByDate.Concat(reports);
 
-                await Task.Delay(totalCount * 3000, ct);
+                await Task.Delay(appSettings.DelayMilliseconds, ct);
             }
 
             return reportsByDate;
         }
 
-        private static IEnumerable<MyCommit[]> Chunk(
-            IEnumerable<MyCommit> totalCommitsByDate)
-        {
-            if (totalCommitsByDate is null || !totalCommitsByDate.Any())
-                return [];
-
-            var totalCount = totalCommitsByDate.Count();
-
-            if (totalCount < 3)
-                return [[.. totalCommitsByDate]];
-
-            return totalCount < 10
-                ? totalCommitsByDate.Chunk(totalCount / 3)
-                : totalCommitsByDate.Chunk(totalCount / 5);
-        }
-
-        private static async Task<Report[]> CallModelAsync(
+        private static async Task<IEnumerable<Report>> CallModelAsync(
             IEnumerable<MyCommit> commits,
+            string modelContext,
             ILogger<Program>? logger,
+            AppSettings appSettings,
             CancellationToken ct = default)
         {
-            if (commits is null || !commits.Any())
+            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
                 return [];
 
-            var content = BuildRequestBody(commits);
+            var content = BuildRequestBody(commits, modelContext, appSettings);
 
-            var response = await _httpClient.PostAsync(CompletionsUri, content, ct);
+            var response = await _httpClient.PostAsync(appSettings.CompletionsUri, content, ct);
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync(ct);
@@ -111,7 +100,8 @@ namespace AutoDoc.Clients
 
             try
             {
-                return JsonSerializer.Deserialize<Report[]>(message, _jsonOptions)!;
+                return JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions)!
+                    .Set(c => c.Participants, appSettings.OwnerName);
             }
             catch (Exception ex)
             {
@@ -121,9 +111,12 @@ namespace AutoDoc.Clients
             }
         }
 
-        private static StringContent BuildRequestBody(IEnumerable<MyCommit> commits)
+        private static StringContent BuildRequestBody(
+            IEnumerable<MyCommit> commits,
+            string modelContext,
+            AppSettings appSettings)
         {
-            if (commits is null || !commits.Any())
+            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
                 return new StringContent(string.Empty);
 
             var inputJson = JsonSerializer.Serialize(commits);
@@ -132,10 +125,10 @@ namespace AutoDoc.Clients
             {
                 messages = new[]
                 {
-                    //new { role = "system", content = Constants.Context },
-                    new { role = "user", content = string.Format(Constants.Message, inputJson) }
+                    new { role = "system", content = modelContext },
+                    new { role = "user", content = string.Format(Constants.ModelMessage, inputJson, appSettings.Culture) }
                 },
-                temperature = 0.5
+                temperature = appSettings.ModelTemperature
             };
 
             var json = JsonSerializer.Serialize(requestBody);

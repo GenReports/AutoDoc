@@ -10,8 +10,7 @@
             Motivation = string.Empty;
             Process = string.Empty;
             Result = string.Empty;
-
-            Participants = "Eduardo Rezende";
+            Participants = string.Empty;
         }
 
         public DateTime Date { get; set; }
@@ -28,6 +27,6 @@
 
         public string Result { get; set; }
 
-        public string Participants { get; }
+        public string Participants { get; set; }
     }
 }

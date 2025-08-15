@@ -1,4 +1,5 @@
-﻿using AutoDoc.Models;
+﻿using System.Text;
+using AutoDoc.Models;
 using AutoDoc.Clients;
 using AutoDoc.Validators;
 using Microsoft.Extensions.Logging;
@@ -13,12 +14,15 @@ namespace AutoDoc
             if (!InputValidator.TryGetDates(args, out DateTime start, out DateTime end))
                 throw new ArgumentException(Constants.InputError);
 
+            CancellationToken ct = default;
+
             var logger = GetLogger();
             var appSettings = GetAppSettings();
+            var modelContext = await GetModelContextAsync(ct);
 
             var myCommits = GitClient.GetCommits(start, end, appSettings);
 
-            await LMClient.GenerateReportsAsync(myCommits, logger, appSettings);
+            await LMClient.GenerateReportsAsync(myCommits, modelContext, logger, appSettings, ct);
         }
 
         static AppSettings GetAppSettings()
@@ -29,6 +33,13 @@ namespace AutoDoc
                 .AddJsonFile(AppSettingsName)
                 .Build()
                 .Get<AppSettings>()!;
+        }
+
+        static async Task<string> GetModelContextAsync(CancellationToken ct)
+        {
+            const string FileName = "Context.txt";
+
+            return await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
         }
 
         static ILogger<Program> GetLogger()

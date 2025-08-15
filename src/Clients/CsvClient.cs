@@ -8,12 +8,11 @@ namespace AutoDoc.Clients
 {
     internal static class CsvClient
     {
-        private static readonly CultureInfo _culture = new("pt-BR");
-        public const string DirectoryName = "Datas";
-
         public static async Task<bool> CreateAsync(
-            IEnumerable<Report[]> chunkReports,
+            IEnumerable<IEnumerable<Report>> chunkReports,
             ILogger<Program>? logger,
+            AppSettings appSettings,
+            CultureInfo culture,
             CancellationToken ct = default)
         {
             if (chunkReports is null || !chunkReports.Any())
@@ -21,7 +20,7 @@ namespace AutoDoc.Clients
 
             foreach (var reports in chunkReports)
             {
-                await CreateAsync(reports, logger, ct);
+                await CreateAsync(reports, logger, appSettings, culture, ct);
             }
 
             return true;
@@ -30,6 +29,8 @@ namespace AutoDoc.Clients
         public static async Task<bool> CreateAsync(
             IEnumerable<Report> reports,
             ILogger<Program>? logger,
+            AppSettings appSettings,
+            CultureInfo culture,
             CancellationToken ct = default)
         {
             if (reports is null || !reports.Any())
@@ -37,10 +38,10 @@ namespace AutoDoc.Clients
 
             try
             {
-                var path = CreatePath(reports.First());
+                var path = CreatePath(reports.First(), appSettings);
 
                 using var writer = new StreamWriter(path);
-                using var csv = new CsvWriter(writer, _culture);
+                using var csv = new CsvWriter(writer, culture);
 
                 await csv.WriteRecordsAsync(reports, ct);
             }
@@ -53,20 +54,21 @@ namespace AutoDoc.Clients
             return true;
         }
 
-        private static string CreatePath(Report report)
+        private static string CreatePath(Report report, AppSettings appSettings)
         {
             ArgumentNullException.ThrowIfNull(report);
 
-            if (!Directory.Exists(DirectoryName))
-                Directory.CreateDirectory(DirectoryName);
+            if (!Directory.Exists(appSettings.OutputPath))
+                Directory.CreateDirectory(appSettings.OutputPath);
 
             var fileName = new StringBuilder()
-                .Append(report.Date.ToString("dd-MM-yyyy-"))
+                .Append(report.Date.ToString())
+                .Append('-')
                 .Append(Guid.CreateVersion7().ToString("N"))
                 .Append(".csv")
                 .ToString();
 
-            return Path.Combine(DirectoryName, fileName);
+            return Path.Combine(appSettings.OutputPath, fileName);
         }
     }
 }

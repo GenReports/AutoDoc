@@ -2,7 +2,6 @@
 using AutoDoc.Models;
 using System.Text.Json;
 using AutoDoc.Extensions;
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -28,17 +27,15 @@ namespace AutoDoc.Clients
             if (commits is null || !commits.Any())
                 return [];
 
-            CultureInfo culture = new(appSettings.Culture);
-
             var chunkReports = new List<IEnumerable<Report>>();
             var dates = commits.Select(c => c.CreatedAt.Date).Distinct();
 
             foreach (var date in dates)
             {
                 var reportsByDate = await GetReportsByDateAsync(commits, date, logger, appSettings, ct);
-                await CsvClient.CreateAsync(reportsByDate, logger, appSettings, culture, ct);
+                await CsvClient.CreateAsync(reportsByDate, logger, appSettings, ct);
 
-                chunkReports.Add([.. reportsByDate]);
+                chunkReports.Add(reportsByDate);
             }
 
             return chunkReports;
@@ -69,7 +66,7 @@ namespace AutoDoc.Clients
                 var reports = await CallModelAsync(processCommits, logger, appSettings, ct);
                 reportsByDate = reportsByDate.Concat(reports);
 
-                await totalCount.DelayAsync(appSettings.DelayMillisecondsMultiplier, ct);
+                await Task.Delay(appSettings.DelayMilliseconds, ct);
             }
 
             return reportsByDate;
@@ -123,7 +120,7 @@ namespace AutoDoc.Clients
                 messages = new[]
                 {
                     //new { role = "system", content = Constants.ModelContext },
-                    new { role = "user", content = string.Format(Constants.ModelMessage, inputJson) }
+                    new { role = "user", content = string.Format(Constants.ModelMessage, inputJson, appSettings.Culture) }
                 },
                 temperature = appSettings.ModelTemperature
             };

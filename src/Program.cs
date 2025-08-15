@@ -1,6 +1,8 @@
-﻿using AutoDoc.Clients;
+﻿using AutoDoc.Models;
+using AutoDoc.Clients;
 using AutoDoc.Validators;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace AutoDoc
 {
@@ -12,10 +14,21 @@ namespace AutoDoc
                 throw new ArgumentException(Constants.InputError);
 
             var logger = GetLogger();
+            var appSettings = GetAppSettings();
 
-            var myCommits = GitClient.GetCommits(start, end);
+            var myCommits = GitClient.GetCommits(start, end, appSettings);
 
-            await LMClient.GenerateReportsAsync(myCommits, logger);
+            await LMClient.GenerateReportsAsync(myCommits, logger, appSettings);
+        }
+
+        static AppSettings GetAppSettings()
+        {
+            const string AppSettingsName = "appsettings.json";
+
+            return new ConfigurationBuilder()
+                .AddJsonFile(AppSettingsName)
+                .Build()
+                .Get<AppSettings>()!;
         }
 
         static ILogger<Program> GetLogger()

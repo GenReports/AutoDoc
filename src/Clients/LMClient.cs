@@ -2,6 +2,7 @@
 using AutoDoc.Models;
 using System.Text.Json;
 using AutoDoc.Extensions;
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -18,23 +19,24 @@ namespace AutoDoc.Clients
             PropertyNameCaseInsensitive = true,
         };
 
-        public const string CompletionsUri = "http://localhost:1234/v1/chat/completions";
-
-        public static async Task<IEnumerable<Report[]>> GenerateReportsAsync(
+        public static async Task<IEnumerable<IEnumerable<Report>>> GenerateReportsAsync(
             IEnumerable<MyCommit> commits,
             ILogger<Program>? logger,
+            AppSettings appSettings,
             CancellationToken ct = default)
         {
             if (commits is null || !commits.Any())
                 return [];
 
-            var chunkReports = new List<Report[]>();
+            CultureInfo culture = new(appSettings.Culture);
+
+            var chunkReports = new List<IEnumerable<Report>>();
             var dates = commits.Select(c => c.CreatedAt.Date).Distinct();
 
             foreach (var date in dates)
             {
-                var reportsByDate = await GetReportsByDateAsync(commits, date, logger, ct);
-                await CsvClient.CreateAsync(reportsByDate, logger, ct);
+                var reportsByDate = await GetReportsByDateAsync(commits, date, logger, appSettings, ct);
+                await CsvClient.CreateAsync(reportsByDate, logger, appSettings, culture, ct);
 
                 chunkReports.Add([.. reportsByDate]);
             }
@@ -46,6 +48,7 @@ namespace AutoDoc.Clients
             IEnumerable<MyCommit> commits,
             DateTime date,
             ILogger<Program>? logger,
+            AppSettings appSettings,
             CancellationToken ct)
         {
             if (commits is null || !commits.Any())
@@ -61,28 +64,29 @@ namespace AutoDoc.Clients
 
             foreach (var processCommits in totalCommitsByDate.Chunk())
             {
-                logger?.LogInformation("Process: {Count}º commits", processCommits.Length);
+                logger?.LogInformation("Process: {Count}º commits", processCommits.Count());
 
-                var reports = await CallModelAsync(processCommits, logger, ct);
+                var reports = await CallModelAsync(processCommits, logger, appSettings, ct);
                 reportsByDate = reportsByDate.Concat(reports);
 
-                await totalCount.DelayAsync(multiplier: 3000, ct);
+                await totalCount.DelayAsync(appSettings.DelayMillisecondsMultiplier, ct);
             }
 
             return reportsByDate;
         }
 
-        private static async Task<Report[]> CallModelAsync(
+        private static async Task<IEnumerable<Report>> CallModelAsync(
             IEnumerable<MyCommit> commits,
             ILogger<Program>? logger,
+            AppSettings appSettings,
             CancellationToken ct = default)
         {
             if (commits is null || !commits.Any())
                 return [];
 
-            var content = BuildRequestBody(commits);
+            var content = BuildRequestBody(commits, appSettings);
 
-            var response = await _httpClient.PostAsync(CompletionsUri, content, ct);
+            var response = await _httpClient.PostAsync(appSettings.CompletionsUri, content, ct);
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync(ct);
@@ -96,7 +100,8 @@ namespace AutoDoc.Clients
 
             try
             {
-                return JsonSerializer.Deserialize<Report[]>(message, _jsonOptions)!;
+                return JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions)!
+                    .Set(c => c.Participants, appSettings.OwnerName);
             }
             catch (Exception ex)
             {
@@ -106,7 +111,7 @@ namespace AutoDoc.Clients
             }
         }
 
-        private static StringContent BuildRequestBody(IEnumerable<MyCommit> commits)
+        private static StringContent BuildRequestBody(IEnumerable<MyCommit> commits, AppSettings appSettings)
         {
             if (commits is null || !commits.Any())
                 return new StringContent(string.Empty);
@@ -117,10 +122,10 @@ namespace AutoDoc.Clients
             {
                 messages = new[]
                 {
-                    //new { role = "system", content = Constants.Context },
-                    new { role = "user", content = string.Format(Constants.Message, inputJson) }
+                    //new { role = "system", content = Constants.ModelContext },
+                    new { role = "user", content = string.Format(Constants.ModelMessage, inputJson) }
                 },
-                temperature = 0.5
+                temperature = appSettings.ModelTemperature
             };
 
             var json = JsonSerializer.Serialize(requestBody);

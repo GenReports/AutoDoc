@@ -5,17 +5,17 @@ namespace AutoDoc.Clients
 {
     internal static class GitClient
     {
-        public const string BaseRepo = @"C:\Users\eduar\Desktop\DoroTech\Nice Acesso\Work\nice-acesso-api";
-        public const string Email = "dudumoises2005@gmail.com";
-
-        public static IEnumerable<MyCommit> GetCommits(DateTime start, DateTime end)
+        public static IEnumerable<MyCommit> GetCommits(
+            DateTime start,
+            DateTime end,
+            AppSettings appSettings)
         {
-            using var repo = new Repository(BaseRepo);
+            using var repo = new Repository(appSettings.RepositoryPath);
 
             List<MyCommit> commits = [];
 
             foreach (var commit in repo.Commits
-                .Where(c => c.Author.Email == Email &&
+                .Where(c => c.Author.Email == appSettings.OwnerEmail &&
                             c.Author.When.DateTime >= start &&
                             c.Author.When.DateTime <= end)
                 .OrderBy(c => c.Author.When.DateTime))
@@ -27,7 +27,7 @@ namespace AutoDoc.Clients
                     CreatedAt = commit.Author.When.DateTime
                 });
             }
-          
+
             return commits;
         }
     }

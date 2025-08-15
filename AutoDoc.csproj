@@ -9,11 +9,15 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="Context.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Context.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
@@ -23,12 +27,6 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Context.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>

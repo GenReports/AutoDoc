@@ -1,7 +1,6 @@
 ﻿using CsvHelper;
 using System.Text;
 using AutoDoc.Models;
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -12,15 +11,14 @@ namespace AutoDoc.Clients
             IEnumerable<IEnumerable<Report>> chunkReports,
             ILogger<Program>? logger,
             AppSettings appSettings,
-            CultureInfo culture,
-            CancellationToken ct = default)
+            CancellationToken ct)
         {
             if (chunkReports is null || !chunkReports.Any())
                 return false;
 
             foreach (var reports in chunkReports)
             {
-                await CreateAsync(reports, logger, appSettings, culture, ct);
+                await CreateAsync(reports, logger, appSettings, ct);
             }
 
             return true;
@@ -30,8 +28,7 @@ namespace AutoDoc.Clients
             IEnumerable<Report> reports,
             ILogger<Program>? logger,
             AppSettings appSettings,
-            CultureInfo culture,
-            CancellationToken ct = default)
+            CancellationToken ct)
         {
             if (reports is null || !reports.Any())
                 return false;
@@ -41,7 +38,7 @@ namespace AutoDoc.Clients
                 var path = CreatePath(reports.First(), appSettings);
 
                 using var writer = new StreamWriter(path);
-                using var csv = new CsvWriter(writer, culture);
+                using var csv = new CsvWriter(writer, appSettings.CultureInfo);
 
                 await csv.WriteRecordsAsync(reports, ct);
             }

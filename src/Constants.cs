@@ -35,8 +35,8 @@
         */
 
         public const string ModelMessage =
-            @"Agora, usando as instruções acima, gere a lista de relatórios técnicos baseando-se no seguinte JSON de commits:
+            @"Now, using the instructions above, generate the list of technical reports based on the following JSON commits:
             {0}
-            Retorne apenas o array JSON completo e válido, sem nenhum outro texto. Os resultados devem estar na língua: {1}.";
+            Please just return only the complete, valid JSON array, without any other text. The results must be in the language: {1}.";
     }
 }

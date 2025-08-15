@@ -29,10 +29,10 @@ namespace AutoDoc.Extensions
                 return [];
 
             if (expression.Body is not MemberExpression memberExpr)
-                return [];
+                return contents;
 
             if (memberExpr.Member is not PropertyInfo propInfo)
-                return [];
+                return contents;
 
             foreach (var content in contents)
                 propInfo.SetValue(content, value);

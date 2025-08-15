@@ -3,9 +3,9 @@
     internal static class Constants
     {
         public const string InputError =
-           @"Por favor insira os argumentos corretos. 
-           1º opção: [DataInicio] [DataFim] | Exemplo: 2025-01-01 2025-02-01 | Explicação: irá gerar 1 mês de relatórios
-           2º opção: [Dias] | Exemplo: 7  | Explicação: irá gerar 1 semana de relatórios a partir da data atual";
+           @"Please enter the correct arguments.
+           Option 1: [StartDate] [EndDate] | Example: 2025-01-01 2025-02-01 | Explanation: Will generate 1 month of reports.
+           Option 2: [Days] | Example: 7 | Explanation: Will generate 1 week of reports from the current date.";
 
         /*
         public const string ModelContext =
@@ -37,6 +37,6 @@
         public const string ModelMessage =
             @"Agora, usando as instruções acima, gere a lista de relatórios técnicos baseando-se no seguinte JSON de commits:
             {0}
-            Retorne apenas o array JSON completo e válido, sem nenhum outro texto.";
+            Retorne apenas o array JSON completo e válido, sem nenhum outro texto. Os resultados devem estar na língua: {1}.";
     }
 }

@@ -71,7 +71,7 @@ namespace AutoDoc.Clients
                 await Task.Delay(appSettings.DelayMilliseconds, ct);
             }
 
-            return reportsByDate;
+            return reportsByDate.Set(c => c.Participants, appSettings.OwnerName);
         }
 
         private static async Task<IEnumerable<Report>> CallModelAsync(
@@ -100,8 +100,7 @@ namespace AutoDoc.Clients
 
             try
             {
-                return JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions)!
-                    .Set(c => c.Participants, appSettings.OwnerName);
+                return JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions)!;
             }
             catch (Exception ex)
             {

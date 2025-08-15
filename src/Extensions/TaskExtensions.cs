@@ -4,8 +4,8 @@
     {
         public static async Task DelayAsync(
             this int count,
-            int multiplier = 1000,
-            CancellationToken ct = default)
+            int multiplier,
+            CancellationToken ct)
         {
             await Task.Delay(count * multiplier, ct);
         }

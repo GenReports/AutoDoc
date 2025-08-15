@@ -1,4 +1,6 @@
-﻿namespace AutoDoc.Models
+﻿using System.Globalization;
+
+namespace AutoDoc.Models
 {
     internal class AppSettings
     {
@@ -20,11 +22,13 @@
 
         public string Culture { get; set; }
 
+        public CultureInfo CultureInfo { get { return new CultureInfo(Culture); } }
+
         public string OutputPath { get; set; }
 
         public string CompletionsUri { get; set; }
 
-        public int DelayMillisecondsMultiplier { get; set; }
+        public int DelayMilliseconds { get; set; }
 
         public double ModelTemperature { get; set; }
     }

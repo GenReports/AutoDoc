@@ -7,7 +7,8 @@
            1º opção: [DataInicio] [DataFim] | Exemplo: 2025-01-01 2025-02-01 | Explicação: irá gerar 1 mês de relatórios
            2º opção: [Dias] | Exemplo: 7  | Explicação: irá gerar 1 semana de relatórios a partir da data atual";
 
-        public const string Context =
+        /*
+        public const string ModelContext =
             @"Você é um assistente especializado em converter mensagens de commits em relatórios técnicos organizados.
             O projeto se chama 'Nice Acesso', um sistema de controle de acesso com equipamentos como Guarita (MG3000), Controladora Ethernet, Facial, Biometria, Relês e Acionadores. 
             O Nice Acesso tem funcionalidades como Usuários, Tipos de Usuários, Pessoas, Pessoas Veículo, Pessoas Acionadores, Equipamentos, Relês, Receptores, Tipo de Pessoa, Rotas de Acesso e etc.       
@@ -31,8 +32,9 @@
             - Use seu conhecimento de sistemas back-end para preencher com coerência quando o commit estiver incompleto.
             Você pode ignorar commits que não fornecem informações suficientes. Seja objetivo, técnico e organizado.
             ";
+        */
 
-        public const string Message =
+        public const string ModelMessage =
             @"Agora, usando as instruções acima, gere a lista de relatórios técnicos baseando-se no seguinte JSON de commits:
             {0}
             Retorne apenas o array JSON completo e válido, sem nenhum outro texto.";

@@ -84,30 +84,47 @@ namespace AutoDoc.Clients
             if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
                 return [];
 
-            var content = BuildRequestBody(commits, modelContext, appSettings);
+            var retriesCount = 1;
+            string message = string.Empty;
+            IEnumerable<Report>? result = null;
 
-            var response = await _httpClient.PostAsync(appSettings.CompletionsUri, content, ct);
-            response.EnsureSuccessStatusCode();
-
-            var responseString = await response.Content.ReadAsStringAsync(ct);
-
-            using var doc = JsonDocument.Parse(responseString);
-            var message = doc.RootElement
-                .GetProperty("choices")[0]
-                .GetProperty("message")
-                .GetProperty("content")
-                .GetString()!;
-
-            try
+            do
             {
-                return JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions)!;
-            }
-            catch (Exception ex)
-            {
-                logger?.LogError("{Error}", ex.Message);
-                logger?.LogError("{Json}", message);
-                throw;
-            }
+                try
+                {
+                    var content = BuildRequestBody(commits, modelContext, appSettings);
+
+                    var response = await _httpClient.PostAsync(appSettings.CompletionsUri, content, ct);
+                    response.EnsureSuccessStatusCode();
+
+                    var responseString = await response.Content.ReadAsStringAsync(ct);
+
+                    using var doc = JsonDocument.Parse(responseString);
+                    message = doc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString()!;
+
+                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions);
+                }
+                catch (Exception ex)
+                {
+                    logger?.LogError("Attempt: {Count}º", retriesCount);
+                    logger?.LogError("{Error}", ex.Message);
+                    logger?.LogError("{Json}", message);
+
+                    retriesCount++;
+
+                    if (retriesCount > appSettings.MaxRetries)
+                        throw;
+
+                    await Task.Delay(appSettings.DelayMilliseconds, ct);
+                }
+
+            } while (retriesCount <= appSettings.MaxRetries && result is null);
+
+            return result!;
         }
 
         private static StringContent BuildRequestBody(

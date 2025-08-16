@@ -16,6 +16,8 @@ namespace AutoDoc.Models
 
         public string RepositoryPath { get; set; }
 
+        public string ProjectName { get { return Path.GetFileNameWithoutExtension(RepositoryPath); } }
+
         public string OwnerEmail { get; set; }
 
         public string OwnerName { get; set; }
@@ -31,5 +33,7 @@ namespace AutoDoc.Models
         public int DelayMilliseconds { get; set; }
 
         public double ModelTemperature { get; set; }
+
+        public int MaxRetries { get; set; }
     }
 }

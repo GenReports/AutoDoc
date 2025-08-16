@@ -30,11 +30,13 @@
             - If a commit is too shallow or irrelevant, ignore it.
             - Return **only a valid JSON array**, without any additional explanation or text.
             - Use your knowledge of back-end systems to fill in coherently when the commit is incomplete.
-            You can ignore commits that do not provide enough information. Be objective, technical, and organized.";
+            You can ignore commits that do not provide enough information. Be objective, technical, and organized.
+
+            The commits refer to:";
 
         public const string ModelMessage =
-            @"Now, using the instructions above, generate the list of technical reports based on the following JSON commits:
-            {0}
-            Please just return only the complete, valid JSON array, without any other text. The results must be in the language: {1}.";
+           @"Now, using the instructions above, generate the list of technical reports based on the following JSON commits:
+           {0}
+           Please just return only the complete, valid JSON array, without any other text. The results must be in the language: {1}.";
     }
 }

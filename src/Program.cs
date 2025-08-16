@@ -41,7 +41,10 @@ namespace AutoDoc
         {
             const string FileName = "Context.txt";
 
-            return await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
+            var userContext = await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
+            ArgumentException.ThrowIfNullOrWhiteSpace(userContext);
+
+            return string.Concat(Constants.ModelContext, Environment.NewLine, userContext).Trim();
         }
 
         static ILogger<Program> GetLogger()

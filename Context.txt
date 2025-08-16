@@ -6,13 +6,13 @@ Você receberá um JSON de entrada com vários commits, contendo os campos `titl
 
 [
     {
-    ""date"": ""2025-08-01T14:05:00"",
-    ""step"": ""Desenvolvimento"",
-    ""activity"": ""Título resumido da atividade realizada"",
-    ""description"": ""Descrição técnica clara da atividade realizada"",
-    ""motivation"": ""Motivo pelo qual a tarefa foi executada"",
-    ""process"": ""Ferramentas ou tecnologias utilizadas para realizar a tarefa"",
-    ""result"": ""Resultado prático alcançado com essa implementação""
+      "date": "2025-08-01T14:05:00",
+      "step": "Desenvolvimento",
+      "activity": "Título resumido da atividade realizada",
+      "description": "Descrição técnica clara da atividade realizada",
+      "motivation": "Motivo pelo qual a tarefa foi executada",
+      "process": "Ferramentas ou tecnologias utilizadas para realizar a tarefa",
+      "result": "Resultado prático alcançado com essa implementação"
     }
 ]
 

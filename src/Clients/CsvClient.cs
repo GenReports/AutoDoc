@@ -59,7 +59,9 @@ namespace AutoDoc.Clients
                 Directory.CreateDirectory(appSettings.OutputPath);
 
             var fileName = new StringBuilder()
-                .Append(report.Date.ToString())
+                .Append(appSettings.ProjectName)
+                .Append('-')
+                .Append(report.Date.ToShortDateString().Replace('/', '-'))
                 .Append('-')
                 .Append(Guid.CreateVersion7().ToString("N"))
                 .Append(".csv")

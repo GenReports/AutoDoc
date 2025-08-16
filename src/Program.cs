@@ -23,6 +23,8 @@ namespace AutoDoc
             var myCommits = GitClient.GetCommits(start, end, appSettings);
 
             await LMClient.GenerateReportsAsync(myCommits, modelContext, logger, appSettings, ct);
+
+            logger?.LogInformation("Finished :) Please look at {OutputPath}", appSettings.OutputPath);
         }
 
         static AppSettings GetAppSettings()

@@ -1,2 +1,5 @@
-﻿The project is called [Your Project Name], an [Your Project description].[Your Project features].
-The commits refer to [Your Project Name], developed in/with: [Your Project languages and tools].
+﻿The project is called [Your Project Name], an [Your Project description].
+
+[Talk about Your Project features]...
+
+The project is developed in/with: [Your Project languages and tools].

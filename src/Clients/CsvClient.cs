@@ -59,6 +59,8 @@ namespace AutoDoc.Clients
                 Directory.CreateDirectory(appSettings.OutputPath);
 
             var fileName = new StringBuilder()
+                .Append(appSettings.ProjectName)
+                .Append('-')
                 .Append(report.Date.ToShortDateString().Replace('/', '-'))
                 .Append('-')
                 .Append(Guid.CreateVersion7().ToString("N"))

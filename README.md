@@ -74,13 +74,13 @@ Ensure it listens on the same port as configured in appsettings.json (default: h
 
 ## ▶️ Usage
 
-1 - Go to releases: https://github.com/IseduardoRezende/AutoDoc/releases
+1 - Go to releases: [Releases](https://github.com/IseduardoRezende/AutoDoc/releases)
 
 2 - Install the zip  
 
 3 - Edit appsettings.json with your repository path and preferences.
 
-4 - Add/edit Context.txt with your reporting instructions.
+4 - Edit Context.txt with your reporting instructions.
 
 5 - Make sure LM Studio server is running.
 

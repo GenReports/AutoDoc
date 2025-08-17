@@ -18,17 +18,18 @@ if (-Not (Test-Path $outputBase)) {
 foreach ($rid in $runtimes) {
     Write-Host "🔨 Publishing for $rid..."
 
-    # Folder per rid
+    # Create Folders
     $publishDir = Join-Path $outputBase "publish-$rid"
     $zipFile    = Join-Path $outputBase "AutoDoc-$rid.zip"
 
-    # Publish
-    dotnet publish $projectPath -c $configuration -r $rid --self-contained $selfContained -o $publishDir
-
-    # Remove last zip id exists
-    if (Test-Path $zipFile) {
+    # Remove last Folders if exists
+    if (Test-Path $publishDir) {
+        Remove-Item $publishDir
         Remove-Item $zipFile
     }
+    
+    # Publish
+    dotnet publish $projectPath -c $configuration -r $rid --self-contained $selfContained -o $publishDir
 
     # Compress only publish folder
     Compress-Archive -Path (Join-Path $publishDir "*") -DestinationPath $zipFile

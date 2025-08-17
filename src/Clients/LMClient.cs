@@ -156,7 +156,9 @@ namespace AutoDoc.Clients
         {
             const string FileName = "Context.txt";
 
-            var userContext = await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
+            var path = Path.Combine(AppContext.BaseDirectory, FileName);
+
+            var userContext = await File.ReadAllTextAsync(path, Encoding.UTF8, ct);
             ArgumentException.ThrowIfNullOrWhiteSpace(userContext);
 
             return string.Concat(Constants.ModelContext, Environment.NewLine, userContext).Trim();

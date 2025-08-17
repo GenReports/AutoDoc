@@ -37,7 +37,7 @@ All settings are handled in the `appsettings.json` file:
   "OwnerEmail": "example@email.com",
   "OwnerName": "Your Name",
   "Culture": "en-US",
-  "OutputPath": "Datas",
+  "OutputPath": "AutoDoc-Reports",
   "CompletionsUri": "http://localhost:1234/v1/chat/completions",
   "DelayMilliseconds": 20000,
   "ModelTemperature": 0.5,

@@ -1,6 +1,6 @@
 # AutoDoc - Git to Report 📚
 
-**AutoDoc** is a simple but powerful tool that automatically analyzes Git commits and generates structured daily CSV reports.  
+**AutoDoc** is a simple but powerful multiplatform tool that automatically analyzes Git commits and generates structured daily CSV reports.  
 It leverages [LM Studio](https://lmstudio.ai/) as the AI engine to transform commit history into meaningful documentation with context-aware summaries.
 
 ---
@@ -116,19 +116,45 @@ After processing, AutoDoc will generate CSV files named by [repoName]-[date]-[gu
 Each row contains structured commit summaries enriched with AI-generated insights.
 
 Example file:
-nice-api-2025-08-14-0198b3ccd15b77a295e7e23516fd3217.csv
+nice-api-08-14-2025-0198b3ccd15b77a295e7e23516fd3217.csv
 
-The example was generated in [pt-BR] because I change appsettings.json
+Example file content output:
 
 ```csv
 Date;Step;Activity;Description;Motivation;Process;Result;Participants
-14/08/2025 13:50:16;Testes de unidade;Adição de testes para PersonService;Implementação de testes unitários para a camada de serviço 'PersonService' no Nice Acesso.;Garantir a qualidade e a correção das operações realizadas pela entidade 'Pessoa' no sistema de controle de acesso.;Uso da ferramenta xUnit para criação e execução dos testes unitários.;Adição de testes que validam as operações básicas da entidade 'Pessoa' no sistema.;Eduardo Rezende
-14/08/2025 13:51:08;Testes;Adição de Testes para PersonVehicleService;Implementação de testes unitários para a camada de serviço PersonVehicleService do sistema Nice Acesso.;Garantir a qualidade e estabilidade das funcionalidades relacionadas à associação entre pessoas e veículos no sistema.;Uso da biblioteca de testes xUnit, Visual Studio e .NET framework;Adição de um conjunto de testes que verificam o comportamento esperado da camada de serviço PersonVehicleService.;Eduardo Rezende
-14/08/2025 13:51:30;Testes de Unidade;Adição de Testes para PersonTriggerService;Criação e implementação de testes unitários para a classe PersonTriggerService, responsável por controlar as interações entre pessoas e acionadores no sistema Nice Acesso.;Garantir a qualidade do código e prevenir bugs potenciais na lógica de negócios.;Utilização da biblioteca NUnit para criação e execução dos testes unitários, além da IDE Visual Studio.;Adição de novos testes que podem ser executados para validar a funcionalidade da classe PersonTriggerService.;Eduardo Rezende
-14/08/2025 15:53:42;Desenvolvimento;Refatorar: Atualizar PersonService;Atualização do método GetByType da classe PersonService para evitar retorno de erro quando não há registros.;Melhoria na experiência do usuário ao prevenir exceções indesejadas.;Uso da linguagem C# (.NET) e do framework Entity Framework.;Maior estabilidade na chamada do método GetByType, evitando retornos de erro inesperados.;Eduardo Rezende
-14/08/2025 15:56:58;Desenvolvimento;Refatorar: Atualizar PersonTypeService;Atualização dos métodos Delete e Disable da classe PersonTypeService, para que eles não retornem erros ao remover ou desabilitar um tipo de pessoa sem pessoas associadas.;Melhorar a segurança do sistema evitando erros inesperados ao excluir ou desativar tipos de pessoa com registros associados.;Linguagem C#, Visual Studio, Entity Framework;Métodos Delete e Disable atualizados para lidarem com casos em que um tipo de pessoa não possui associações.;Eduardo Rezende
+08/14/2025 13:50:16;Unit Tests;Addition of tests for PersonService;Implementation of unit tests for the 'PersonService' service layer in Nice Acesso.;Ensure the quality and correctness of the operations performed by the 'Person' entity in the access control system.;Use of the xUnit tool for the creation and execution of unit tests.;Addition of tests that validate the basic operations of the 'Person' entity in the system.;Eduardo Rezende
+08/14/2025 13:51:08;Tests;Addition of tests for PersonVehicleService;Implementation of unit tests for the PersonVehicleService service layer of the Nice Acesso system.;Ensure the quality and stability of the functionalities related to the association between people and vehicles in the system.;Use of the xUnit testing library, Visual Studio, and .NET framework;Addition of a set of tests that verify the expected behavior of the PersonVehicleService service layer.;Eduardo Rezende
+08/14/2025 13:51:30;Unit Tests;Addition of tests for PersonTriggerService;Creation and implementation of unit tests for the PersonTriggerService class, responsible for controlling the interactions between people and triggers in the Nice Acesso system.;Ensure code quality and prevent potential bugs in business logic.;Use of the NUnit library for the creation and execution of unit tests, along with the Visual Studio IDE.;Addition of new tests that can be executed to validate the functionality of the PersonTriggerService class.;Eduardo Rezende
+08/14/2025 15:53:42;Development;Refactor: Update PersonService;Update of the GetByType method of the PersonService class to avoid returning errors when no records are found.;Improvement of the user experience by preventing unwanted exceptions.;Use of the C# language (.NET) and the Entity Framework.;Greater stability in the GetByType method call, avoiding unexpected error returns.;Eduardo Rezende
+08/14/2025 15:56:58;Development;Refactor: Update PersonTypeService;Update of the Delete and Disable methods of the PersonTypeService class, so that they do not return errors when removing or disabling a person type without associated people.;Improve system safety by avoiding unexpected errors when deleting or disabling person types with associated records.;C# language, Visual Studio, Entity Framework;Delete and Disable methods updated to handle cases where a person type has no associations.;Eduardo Rezende
 
 ```
+---
+
+## 💡 Note
+
+🧰 The hardware settings used for the test: 
+
+- 12th Generation Intel(R) Core(TM) i5-12450HX Processor (2.40 GHz)
+
+- 16.0 GB Installed RAM DDR5
+
+- 512.0 GB SSD
+
+- NVDIA GeForce RTX 3050 6.0 GB
+
+🤖 The model settings used for the test:
+
+- Publisher: NousResearch
+
+- Model: nous-hermes-2-mistral-7b-dpo
+
+- Params: 8B
+
+- Quant: Q5_K_M
+
+- Size: 5.13 GB
+
 ---
 
 ## 🤝 Contributing

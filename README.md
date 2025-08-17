@@ -134,6 +134,8 @@ Date;Step;Activity;Description;Motivation;Process;Result;Participants
 ## 🤝 Contributing
 Contributions are welcome! Feel free to open issues or submit PRs with improvements.
 
+Please for commits pattern follows: [pattern](https://github.com/IseduardoRezende/commit-pattern)
+
 ---
 
 ## 📜 License

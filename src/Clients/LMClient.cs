@@ -20,13 +20,14 @@ namespace AutoDoc.Clients
 
         public static async Task<IEnumerable<IEnumerable<Report>>> GenerateReportsAsync(
             IEnumerable<MyCommit> commits,
-            string modelContext,
             ILogger<Program>? logger,
             AppSettings appSettings,
             CancellationToken ct)
         {
-            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
+            if (commits is null || !commits.Any())
                 return [];
+
+            var modelContext = await GetModelContextAsync(ct);
 
             var chunkReports = new List<IEnumerable<Report>>();
             var dates = commits.Select(c => c.CreatedAt.Date).Distinct();
@@ -50,7 +51,7 @@ namespace AutoDoc.Clients
             AppSettings appSettings,
             CancellationToken ct)
         {
-            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
+            if (commits is null || !commits.Any())
                 return [];
 
             IEnumerable<Report> reportsByDate = [];
@@ -81,7 +82,7 @@ namespace AutoDoc.Clients
             AppSettings appSettings,
             CancellationToken ct = default)
         {
-            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
+            if (commits is null || !commits.Any())
                 return [];
 
             var retriesCount = 1;
@@ -132,7 +133,7 @@ namespace AutoDoc.Clients
             string modelContext,
             AppSettings appSettings)
         {
-            if (commits is null || !commits.Any() || string.IsNullOrWhiteSpace(modelContext))
+            if (commits is null || !commits.Any())
                 return new StringContent(string.Empty);
 
             var inputJson = JsonSerializer.Serialize(commits);
@@ -149,6 +150,16 @@ namespace AutoDoc.Clients
 
             var json = JsonSerializer.Serialize(requestBody);
             return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        private static async Task<string> GetModelContextAsync(CancellationToken ct)
+        {
+            const string FileName = "Context.txt";
+
+            var userContext = await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
+            ArgumentException.ThrowIfNullOrWhiteSpace(userContext);
+
+            return string.Concat(Constants.ModelContext, Environment.NewLine, userContext).Trim();
         }
     }
 }

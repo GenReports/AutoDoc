@@ -1,5 +1,4 @@
-﻿using System.Text;
-using AutoDoc.Models;
+﻿using AutoDoc.Models;
 using AutoDoc.Clients;
 using AutoDoc.Validators;
 using Microsoft.Extensions.Logging;
@@ -18,11 +17,10 @@ namespace AutoDoc
 
             var logger = GetLogger();
             var appSettings = GetAppSettings();
-            var modelContext = await GetModelContextAsync(ct);
 
             var myCommits = GitClient.GetCommits(start, end, appSettings);
 
-            await LMClient.GenerateReportsAsync(myCommits, modelContext, logger, appSettings, ct);
+            await LMClient.GenerateReportsAsync(myCommits, logger, appSettings, ct);
 
             logger?.LogInformation("Finished :) Please look at {OutputPath}", appSettings.OutputPath);
         }
@@ -35,14 +33,7 @@ namespace AutoDoc
                 .AddJsonFile(AppSettingsName)
                 .Build()
                 .Get<AppSettings>()!;
-        }
-
-        static async Task<string> GetModelContextAsync(CancellationToken ct)
-        {
-            const string FileName = "Context.txt";
-
-            return await File.ReadAllTextAsync(FileName, Encoding.UTF8, ct);
-        }
+        }        
 
         static ILogger<Program> GetLogger()
         {

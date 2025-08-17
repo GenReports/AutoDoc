@@ -18,7 +18,8 @@ namespace AutoDoc.Clients
 
             foreach (var reports in chunkReports)
             {
-                await CreateAsync(reports, logger, appSettings, ct);
+                if (!await CreateAsync(reports, logger, appSettings, ct))
+                    return false;
             }
 
             return true;

@@ -20,7 +20,6 @@ It leverages AI to transform commit history into meaningful documentation with c
 
 4. **AI Integration**  
    - Can use OpenAI APIs like (`/v1/chat/completions`).  
-   - Can use custom APIs like (`v1/messages`)
    - Automatically retries failed requests and waits between calls to avoid memory overload.
 
 5. **CSV Generation**  
@@ -40,7 +39,6 @@ All settings are handled in the `appsettings.json` file:
   "Culture": "en-US",
   "OutputPath": "AutoDoc-Reports",
   "CompletionsUri": "http://localhost:1234/v1/chat/completions",
-  "AuthenticationHeader": "Bearer",
   "ApiKey": "your_api_key_here",
   "DelayMilliseconds": 20000,
   "ModelTemperature": 0.5,
@@ -55,7 +53,6 @@ All settings are handled in the `appsettings.json` file:
 - Culture              → Defines reporting culture/locale (e.g., pt-BR, en-US).
 - OutputPath           → Directory where daily CSV files are saved.
 - CompletionsUri       → API endpoint.
-- AuthenticationHeader → API Authentication method.
 - ApiKey               → API Key if applicable.
 - DelayMilliseconds    → Delay between requests (prevents RAM overload).
 - ModelTemperature     → Controls creativity of the model (0 = focused, 1 = creative).

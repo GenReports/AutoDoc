@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AutoDoc": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

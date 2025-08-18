@@ -12,7 +12,6 @@ namespace AutoDoc.Models
             Culture = string.Empty;
             OutputPath = string.Empty;
             CompletionsUri = string.Empty;
-            AuthenticationHeader = string.Empty;
             ApiKey = string.Empty;
         }
 
@@ -31,8 +30,6 @@ namespace AutoDoc.Models
         public string OutputPath { get; set; }
 
         public string CompletionsUri { get; set; }
-
-        public string AuthenticationHeader { get; set; }
 
         public string ApiKey { get; set; }
 

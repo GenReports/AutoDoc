@@ -87,7 +87,7 @@ namespace AutoDoc.Clients
                 return [];
 
             var retriesCount = 1;
-            string message = string.Empty;
+            string json = string.Empty;
             IEnumerable<Report>? result = null;
 
             do
@@ -98,19 +98,19 @@ namespace AutoDoc.Clients
                     var responseString = await response.Content.ReadAsStringAsync(ct);
 
                     using var doc = JsonDocument.Parse(responseString);
-                    message = doc.RootElement
+                    json = doc.RootElement
                         .GetProperty("choices")[0]
                         .GetProperty("message")
                         .GetProperty("content")
                         .GetString()!;
 
-                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions);
+                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(json, _jsonOptions);
                 }
                 catch (Exception ex)
                 {
                     logger?.LogError("Attempt: {Count}º", retriesCount);
                     logger?.LogError("{Error}", ex.Message);
-                    logger?.LogError("{Json}", message);
+                    logger?.LogError("{Json}", json);
 
                     retriesCount++;
 

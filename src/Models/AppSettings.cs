@@ -12,6 +12,7 @@ namespace AutoDoc.Models
             Culture = string.Empty;
             OutputPath = string.Empty;
             CompletionsUri = string.Empty;
+            ApiKey = string.Empty;
         }
 
         public string RepositoryPath { get; set; }
@@ -29,6 +30,8 @@ namespace AutoDoc.Models
         public string OutputPath { get; set; }
 
         public string CompletionsUri { get; set; }
+
+        public string ApiKey { get; set; }
 
         public int DelayMilliseconds { get; set; }
 

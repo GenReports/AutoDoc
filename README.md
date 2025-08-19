@@ -1,7 +1,7 @@
 # AutoDoc - Git to Report 📚
 
 **AutoDoc** is a simple but powerful multiplatform tool that automatically analyzes Git commits and generates structured daily CSV reports.  
-It leverages [LM Studio](https://lmstudio.ai/) as the AI engine to transform commit history into meaningful documentation with context-aware summaries.
+It leverages AI to transform commit history into meaningful documentation with context-aware summaries.
 
 ---
 
@@ -19,7 +19,7 @@ It leverages [LM Studio](https://lmstudio.ai/) as the AI engine to transform com
    - Each part is sent to the model for structured summarization.
 
 4. **AI Integration**  
-   - Uses LM Studio's local API (`/v1/chat/completions`).  
+   - Can use OpenAI APIs like (`/v1/chat/completions`).  
    - Automatically retries failed requests and waits between calls to avoid memory overload.
 
 5. **CSV Generation**  
@@ -39,6 +39,7 @@ All settings are handled in the `appsettings.json` file:
   "Culture": "en-US",
   "OutputPath": "AutoDoc-Reports",
   "CompletionsUri": "http://localhost:1234/v1/chat/completions",
+  "ApiKey": "your_api_key_here",
   "DelayMilliseconds": 20000,
   "ModelTemperature": 0.5,
   "MaxRetries": 2
@@ -46,15 +47,16 @@ All settings are handled in the `appsettings.json` file:
 ```
 
 🔢 Explanation of Parameters:
-- RepositoryPath    → Path to the Git repository to analyze.
-- OwnerEmail        → Git email address for filtering commits.
-- OwnerName         → Who is responsible for the commits.
-- Culture           → Defines reporting culture/locale (e.g., pt-BR, en-US).
-- OutputPath        → Directory where daily CSV files are saved.
-- CompletionsUri    → API endpoint of LM Studio.
-- DelayMilliseconds → Delay between requests (prevents RAM overload).
-- ModelTemperature  → Controls creativity of the model (0 = focused, 1 = creative).
-- MaxRetries        → How many times to retry if a request fails.
+- RepositoryPath       → Path to the Git repository to analyze.
+- OwnerEmail           → Git email address for filtering commits.
+- OwnerName            → Who is responsible for the commits.
+- Culture              → Defines reporting culture/locale (e.g., pt-BR, en-US).
+- OutputPath           → Directory where daily CSV files are saved.
+- CompletionsUri       → API endpoint.
+- ApiKey               → API Key if applicable.
+- DelayMilliseconds    → Delay between requests (prevents RAM overload).
+- ModelTemperature     → Controls creativity of the model (0 = focused, 1 = creative).
+- MaxRetries           → How many times to retry if a request fails.
 
 ---
 
@@ -74,8 +76,7 @@ The project is developed in/with: [Your Project languages and tools].
 ---
 
 ## 📦 Requirements
-LM Studio installed and running locally.
-Start LM Studio server with your preferred model.
+Access to an AI server.
 Ensure it listens on the same port as configured in appsettings.json (default: http://localhost:1234).
 
 ---
@@ -90,9 +91,10 @@ Ensure it listens on the same port as configured in appsettings.json (default: h
 
 4 - Edit Context.txt with your project context.
 
-5 - Make sure LM Studio server is running.
+5 - Make sure AI server is reachable.
 
 6 - Execute AutoDoc.exe 
+
   - Option 1: [StartDate] [EndDate] | Explanation: The folllowing arguments will generate 1 month of reports.
   ```text
  PS C:\Users\eduar> C:\Users\eduar\Desktop\AutoDoc-win-x64\AutoDoc.exe 2025-01-01 2025-02-01

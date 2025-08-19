@@ -2,6 +2,7 @@
 using AutoDoc.Models;
 using System.Text.Json;
 using AutoDoc.Extensions;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Logging;
 
 namespace AutoDoc.Clients
@@ -86,34 +87,30 @@ namespace AutoDoc.Clients
                 return [];
 
             var retriesCount = 1;
-            string message = string.Empty;
+            string json = string.Empty;
             IEnumerable<Report>? result = null;
 
             do
             {
                 try
                 {
-                    var content = BuildRequestBody(commits, modelContext, appSettings);
-
-                    var response = await _httpClient.PostAsync(appSettings.CompletionsUri, content, ct);
-                    response.EnsureSuccessStatusCode();
-
+                    var response = await SendRequestAsync(commits, modelContext, appSettings, ct);
                     var responseString = await response.Content.ReadAsStringAsync(ct);
 
                     using var doc = JsonDocument.Parse(responseString);
-                    message = doc.RootElement
+                    json = doc.RootElement
                         .GetProperty("choices")[0]
                         .GetProperty("message")
                         .GetProperty("content")
                         .GetString()!;
 
-                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(message, _jsonOptions);
+                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(json, _jsonOptions);
                 }
                 catch (Exception ex)
                 {
                     logger?.LogError("Attempt: {Count}º", retriesCount);
                     logger?.LogError("{Error}", ex.Message);
-                    logger?.LogError("{Json}", message);
+                    logger?.LogError("{Json}", json);
 
                     retriesCount++;
 
@@ -126,6 +123,29 @@ namespace AutoDoc.Clients
             } while (retriesCount <= appSettings.MaxRetries && result is null);
 
             return result!;
+        }
+
+        private static async Task<HttpResponseMessage> SendRequestAsync(
+            IEnumerable<MyCommit> commits,
+            string modelContext,
+            AppSettings appSettings,
+            CancellationToken ct)
+        {
+            if (commits is null || !commits.Any())
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+
+            var content = BuildRequestBody(commits, modelContext, appSettings);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, appSettings.CompletionsUri)
+            {
+                Content = content
+            };
+
+            if (!string.IsNullOrWhiteSpace(appSettings.ApiKey))
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", appSettings.ApiKey);
+
+            var response = await _httpClient.SendAsync(request, ct);
+            return response.EnsureSuccessStatusCode();
         }
 
         private static StringContent BuildRequestBody(

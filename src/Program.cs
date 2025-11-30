@@ -1,8 +1,10 @@
-﻿using AutoDoc.Clients;
-using AutoDoc.Models;
+﻿using AutoDoc.Core;
+using AutoDoc.Core.Clients;
+using AutoDoc.Core.Models;
 using AutoDoc.Validators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace AutoDoc
 {
@@ -15,14 +17,40 @@ namespace AutoDoc
 
             CancellationToken ct = default;
 
-            var logger = GetLogger();
+            var logger = LogUtils.GetLogger();
             var appSettings = GetAppSettings();
 
             var myCommits = GitClient.GetCommits(start, end, appSettings);
 
-            await LMClient.GenerateReportsAsync(myCommits, logger, appSettings, ct);
+            var modelData = await GetModelDataAsync(ct);
+
+            await LMClient.GenerateReportsAsync(myCommits, modelData, logger, appSettings, ct);
 
             logger?.LogInformation("Finished :) Please look at {OutputPath}", appSettings.OutputPath);
+        }
+
+        static async Task<string> GetModelContextAsync(CancellationToken ct)
+        {
+            const string FileName = "Context.txt";
+
+            var path = Path.Combine(AppContext.BaseDirectory, FileName);
+
+            var userContext = await File.ReadAllTextAsync(path, Encoding.UTF8, ct);
+            ArgumentException.ThrowIfNullOrWhiteSpace(userContext);
+
+            return string.Concat(Constants.ModelContext, Environment.NewLine, userContext).Trim();
+        }
+
+        static async Task<ModelData> GetModelDataAsync(CancellationToken ct = default)
+        {
+            var modelTemplateMsg = Constants.ModelMessage;
+            var modelContext = await GetModelContextAsync(ct);
+
+            return new ModelData
+            {
+                Context = modelContext,
+                TemplateMessage = modelTemplateMsg,
+            };
         }
 
         static AppSettings GetAppSettings()
@@ -33,17 +61,6 @@ namespace AutoDoc
                 .AddJsonFile(AppSettingsName)
                 .Build()
                 .Get<AppSettings>()!;
-        }
-
-        static ILogger<Program> GetLogger()
-        {
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddConsole();
-                builder.SetMinimumLevel(LogLevel.Information);
-            });
-
-            return loggerFactory.CreateLogger<Program>();
         }
     }
 }

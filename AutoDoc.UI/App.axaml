@@ -1,0 +1,31 @@
+<Application xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="AutoDoc.UI.App"
+			 xmlns:local="using:AutoDoc.UI"
+             xmlns:views="using:AutoDoc.UI.Views"
+			 xmlns:vm="using:AutoDoc.UI.ViewModels"
+			 RequestedThemeVariant="Default">
+
+	<Application.DataTemplates>
+		 <DataTemplate DataType="vm:DashboardViewModel">
+            <views:DashboardView />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:RepositoriesViewModel">
+            <views:RepositoriesView />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:ConfigViewModel">
+            <views:ConfigView />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:ExecutionViewModel">
+            <views:ExecutionView />
+        </DataTemplate>
+	</Application.DataTemplates>
+
+	<Application.Styles>
+		<FluentTheme />
+	</Application.Styles>
+
+</Application>

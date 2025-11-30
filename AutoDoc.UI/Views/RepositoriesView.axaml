@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:AutoDoc.Core.Models"
+			 xmlns:vm="using:AutoDoc.UI.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="AutoDoc.UI.Views.RepositoriesView"
+			 x:DataType="vm:RepositoriesViewModel">
+
+	<Design.DataContext>
+		<vm:RepositoriesViewModel/>
+	</Design.DataContext>
+
+	<Grid RowDefinitions="Auto,*,Auto" Margin="16">
+
+		<StackPanel Orientation="Horizontal" Spacing="8">
+			<TextBox Width="400"
+					 Watermark="Repository path..."
+					 Text="{Binding Path}" />
+
+			<Button Content="Browse..."
+					Command="{Binding PickFolderCommand}" />
+		</StackPanel>
+
+		<ListBox Grid.Row="1"
+				 Margin="0,16,0,16"
+				 ItemsSource="{Binding Repositories}"
+				 SelectedItem="{Binding SelectedRepository}">
+			<ListBox.ItemTemplate>
+				<DataTemplate x:DataType="models:Repository">
+					<TextBlock Text="{Binding Path}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
+			<Button Content="Add"
+					Command="{Binding AddCommand}" />
+			<Button Content="Remove"
+					Command="{Binding RemoveCommand}" />	
+		</StackPanel>
+
+	</Grid>
+
+</UserControl>

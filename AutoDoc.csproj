@@ -10,6 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="C:\Users\eduar\.nuget\packages\toonnet\1.0.4\contentFiles\any\net10.0\ToonNet.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Context.txt" />
 	</ItemGroup>
@@ -30,6 +34,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="ToonNet" Version="1.0.4" />
 	</ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
 namespace AutoDoc.Models
 {
-    internal class AppSettings
+    public class AppSettings
     {
         public AppSettings()
         {

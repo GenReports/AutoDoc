@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AutoDoc.Extensions
 {
-    internal static class IEnumerableExtensions
+    public static class IEnumerableExtensions
     {
         public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> values)
         {

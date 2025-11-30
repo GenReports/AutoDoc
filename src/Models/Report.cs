@@ -1,6 +1,6 @@
 ﻿namespace AutoDoc.Models
 {
-    internal class Report
+    public class Report
     {
         public Report()
         {

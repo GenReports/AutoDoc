@@ -1,6 +1,6 @@
 ﻿namespace AutoDoc.Models
 {
-    internal class MyCommit
+    public class MyCommit
     {
         public MyCommit()
         {
@@ -9,7 +9,7 @@
         }
 
         public string Message { get; set; }
-    
+
         public string Tittle { get; set; }
 
         public DateTime CreatedAt { get; set; }

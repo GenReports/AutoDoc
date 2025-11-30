@@ -1,11 +1,11 @@
-﻿using CsvHelper;
-using System.Text;
-using AutoDoc.Models;
+﻿using AutoDoc.Models;
+using CsvHelper;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace AutoDoc.Clients
 {
-    internal static class CsvClient
+    public static class CsvClient
     {
         public static async Task<bool> CreateAsync(
             IEnumerable<IEnumerable<Report>> chunkReports,

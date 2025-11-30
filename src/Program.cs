@@ -1,12 +1,12 @@
-﻿using AutoDoc.Models;
-using AutoDoc.Clients;
+﻿using AutoDoc.Clients;
+using AutoDoc.Models;
 using AutoDoc.Validators;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace AutoDoc
 {
-    class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
@@ -33,7 +33,7 @@ namespace AutoDoc
                 .AddJsonFile(AppSettingsName)
                 .Build()
                 .Get<AppSettings>()!;
-        }        
+        }
 
         static ILogger<Program> GetLogger()
         {

@@ -1,6 +1,6 @@
 ﻿namespace AutoDoc.Validators
 {
-    internal static class InputValidator
+    public static class InputValidator
     {
         public static bool TryGetDates(string[] args, out DateTime start, out DateTime end)
         {

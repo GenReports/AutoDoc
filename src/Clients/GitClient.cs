@@ -1,9 +1,9 @@
-﻿using LibGit2Sharp;
-using AutoDoc.Models;
+﻿using AutoDoc.Models;
+using LibGit2Sharp;
 
 namespace AutoDoc.Clients
 {
-    internal static class GitClient
+    public static class GitClient
     {
         public static IEnumerable<MyCommit> GetCommits(
             DateTime start,

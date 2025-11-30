@@ -1,22 +1,28 @@
-﻿using System.Text;
+﻿using AutoDoc.Extensions;
 using AutoDoc.Models;
-using System.Text.Json;
-using AutoDoc.Extensions;
-using System.Net.Http.Headers;
+using AutoDoc.src.Extensions;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using ToonNetSerializer;
 
 namespace AutoDoc.Clients
 {
-    internal static class LMClient
+    public static class LMClient
     {
+        const int TimeoutSeconds = 10_000;
+
         private static readonly HttpClient _httpClient = new()
         {
-            Timeout = TimeSpan.FromSeconds(10_000)
+            Timeout = TimeSpan.FromSeconds(TimeoutSeconds)
         };
 
-        private static readonly JsonSerializerOptions _jsonOptions = new()
+        private static readonly ToonDecodeOptions _toonOptions = new()
         {
-            PropertyNameCaseInsensitive = true,
+            Indent = 1,
+            Strict = true,
+            ExpandPaths = PathExpansionMode.Safe
         };
 
         public static async Task<IEnumerable<IEnumerable<Report>>> GenerateReportsAsync(
@@ -86,43 +92,20 @@ namespace AutoDoc.Clients
             if (commits is null || !commits.Any())
                 return [];
 
-            var retriesCount = 1;
-            string json = string.Empty;
-            IEnumerable<Report>? result = null;
-
-            do
+            return await RetryExtensions.ExecuteAsync(async ct =>
             {
-                try
-                {
-                    var response = await SendRequestAsync(commits, modelContext, appSettings, ct);
-                    var responseString = await response.Content.ReadAsStringAsync(ct);
+                var response = await SendRequestAsync(commits, modelContext, appSettings, ct);
+                var responseString = await response.Content.ReadAsStringAsync(ct);
 
-                    using var doc = JsonDocument.Parse(responseString);
-                    json = doc.RootElement
-                        .GetProperty("choices")[0]
-                        .GetProperty("message")
-                        .GetProperty("content")
-                        .GetString()!;
+                using var doc = JsonDocument.Parse(responseString);
+                var json = doc.RootElement
+                    .GetProperty("choices")[0]
+                    .GetProperty("message")
+                    .GetProperty("content")
+                    .GetString()!;
 
-                    result = JsonSerializer.Deserialize<IEnumerable<Report>>(json, _jsonOptions);
-                }
-                catch (Exception ex)
-                {
-                    logger?.LogError("Attempt: {Count}º", retriesCount);
-                    logger?.LogError("{Error}", ex.Message);
-                    logger?.LogError("{Json}", json);
-
-                    retriesCount++;
-
-                    if (retriesCount > appSettings.MaxRetries)
-                        throw;
-
-                    await Task.Delay(appSettings.DelayMilliseconds, ct);
-                }
-
-            } while (retriesCount <= appSettings.MaxRetries && result is null);
-
-            return result!;
+                return ToonNet.Decode<IEnumerable<Report>>(json, _toonOptions)!;
+            }, appSettings, logger, ct);
         }
 
         private static async Task<HttpResponseMessage> SendRequestAsync(
@@ -156,7 +139,7 @@ namespace AutoDoc.Clients
             if (commits is null || !commits.Any())
                 return new StringContent(string.Empty);
 
-            var inputJson = JsonSerializer.Serialize(commits);
+            var inputJson = ToonNet.Encode(commits);
 
             var requestBody = new
             {

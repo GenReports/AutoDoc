@@ -1,6 +1,6 @@
 ﻿namespace AutoDoc
 {
-    internal static class Constants
+    public static class Constants
     {
         public const string InputError =
            @"Please enter the correct arguments.

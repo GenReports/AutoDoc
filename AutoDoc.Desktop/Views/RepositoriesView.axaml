@@ -2,19 +2,16 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="using:AutoDoc.Core.Models"
+			 xmlns:models="using:AutoDoc.Core.Models"
 			 xmlns:vm="using:AutoDoc.UI.ViewModels"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="AutoDoc.UI.Views.RepositoriesView"
 			 x:DataType="vm:RepositoriesViewModel">
 
-	<Design.DataContext>
-		<vm:RepositoriesViewModel/>
-	</Design.DataContext>
-
 	<Grid RowDefinitions="Auto,*,Auto" Margin="16">
 
-		<StackPanel Orientation="Horizontal" Spacing="8">
+		<!-- TOPO (PATH + BROWSE) -->
+		<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
 			<TextBox Width="400"
 					 Watermark="Repository path..."
 					 Text="{Binding Path}" />
@@ -23,22 +20,71 @@
 					Command="{Binding PickFolderCommand}" />
 		</StackPanel>
 
-		<ListBox Grid.Row="1"
-				 Margin="0,16,0,16"
-				 ItemsSource="{Binding Repositories}"
-				 SelectedItem="{Binding SelectedRepository}">
-			<ListBox.ItemTemplate>
-				<DataTemplate x:DataType="models:Repository">
-					<TextBlock Text="{Binding Path}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+		<!-- LISTAGEM -->
+		<Grid Grid.Row="1"
+			  RowDefinitions="Auto,*"
+			  Margin="0,16,0,16">
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
+			<!-- Cabeçalho -->
+			<Border Background="#222" Padding="8" CornerRadius="4">
+				<Grid ColumnDefinitions="*">
+					<TextBlock Text="Repository Path"
+							   FontWeight="Bold"/>
+				</Grid>
+			</Border>
+
+			<!-- Lista -->
+			<ListBox Grid.Row="1"
+					 ItemsSource="{Binding Repositories}"
+					 SelectedItem="{Binding SelectedRepository}"
+					 Margin="0,4,0,0">
+
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="models:Repository">
+						<Border Padding="8">
+							<Grid ColumnDefinitions="*">
+								<TextBlock Text="{Binding Path}" />
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+				<!-- Estilos -->
+				<ListBox.Styles>
+
+					<!-- Linhas alternadas -->
+					<Style Selector="ListBoxItem:nth-child(odd) /template/ Border">
+						<Setter Property="Background" Value="#1AFFFFFF"/>
+					</Style>
+
+					<!-- Hover -->
+					<Style Selector="ListBoxItem:pointerover /template/ Border">
+						<Setter Property="Background" Value="#333"/>
+					</Style>
+
+					<!-- Selecionado -->
+					<Style Selector="ListBoxItem:selected /template/ Border">
+						<Setter Property="Background" Value="#555"/>
+					</Style>
+
+				</ListBox.Styles>
+
+			</ListBox>
+
+		</Grid>
+
+		<!-- BOTÕES -->
+		<StackPanel Grid.Row="2"
+					Orientation="Horizontal"
+					Spacing="12"
+					HorizontalAlignment="Center">
+
 			<Button Content="Add"
 					Command="{Binding AddCommand}" />
+
 			<Button Content="Remove"
-					Command="{Binding RemoveCommand}" />	
+					Command="{Binding RemoveCommand}" />
+
 		</StackPanel>
 
 	</Grid>

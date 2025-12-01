@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace AutoDoc.Core.Models
 {
@@ -6,25 +7,35 @@ namespace AutoDoc.Core.Models
     {
         public AppSettings()
         {
-            RepositoryPath = string.Empty;
-            OwnerEmail = string.Empty;
-            OwnerName = string.Empty;
+            Name = string.Empty;
+            ApiKey = string.Empty;
             Culture = string.Empty;
+            OwnerName = string.Empty;
+            OwnerEmail = string.Empty;
             OutputPath = string.Empty;
             CompletionsUri = string.Empty;
-            ApiKey = string.Empty;
+            RepositoryPath = string.Empty;
         }
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [JsonIgnore]
         public string RepositoryPath { get; set; }
 
+        [JsonIgnore]
         public string ProjectName { get { return Path.GetFileNameWithoutExtension(RepositoryPath); } }
 
+        [JsonIgnore]
         public string OwnerEmail { get; set; }
 
+        [JsonIgnore]
         public string OwnerName { get; set; }
+
+        public string Name { get; set; }
 
         public string Culture { get; set; }
 
+        [JsonIgnore]
         public CultureInfo CultureInfo { get { return new CultureInfo(Culture); } }
 
         public string OutputPath { get; set; }

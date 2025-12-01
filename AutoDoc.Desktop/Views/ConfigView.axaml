@@ -1,8 +1,114 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AutoDoc.UI.Views.ConfigView">
-  Welcome to Avalonia!
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:AutoDoc.UI.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="AutoDoc.UI.Views.ConfigView"
+			 x:DataType="vm:ConfigViewModel">
+
+	<Grid RowDefinitions="Auto,*,Auto" Margin="16" ColumnDefinitions="*,*">
+
+		<!-- FORMULÁRIO -->
+		<StackPanel Grid.Column="0" Spacing="8" Margin="10">
+
+			<Label Content="Name"/>
+			<TextBox Watermark="config2" Text="{Binding Name}" />
+
+			<Label Content="Culture"/>
+			<TextBox Watermark="en-US" Text="{Binding Culture}" />
+
+			<Label Content="Output Path"/>
+			<TextBox
+			Text="{Binding OutputPath}" />
+
+			<Button Content="Browse..."
+					Command="{Binding PickFolderCommand}" />
+
+			<Label Content="Completions URI"/>
+			<TextBox Watermark="https://api.openai.com/v1/chat/completions" Text="{Binding CompletionsUri}" />
+
+			<Label Content="API Key"/>
+			<TextBox Watermark="" Text="{Binding ApiKey}" />
+
+			<Label Content="Model Temperature"/>
+			<NumericUpDown Watermark="0.7" Minimum="0" Maximum="1"
+						   Value="{Binding ModelTemperature}" />
+
+			<Label Content="Max Retries"/>
+			<NumericUpDown Watermark="0" Minimum="0"
+						   Value="{Binding MaxRetries}" />
+
+			<Label Content="Delay Milliseconds"/>
+			<NumericUpDown Watermark="5000" Minimum="0"
+						   Value="{Binding DelayMilliseconds}" />
+
+		</StackPanel>
+
+		<Grid Grid.Column="1" Margin="16" RowDefinitions="Auto,*">
+
+			<!-- Cabeçalho -->
+			<Border Background="#222" Padding="8" CornerRadius="4">
+				<Grid ColumnDefinitions="2*, *">
+					<TextBlock Text="Name" FontWeight="Bold" />
+					<TextBlock Grid.Column="1" Text="Culture" FontWeight="Bold" />
+				</Grid>
+			</Border>
+
+			<!-- Lista -->
+			<ListBox Grid.Row="1"
+					 Margin="0,4,0,0"
+					 ItemsSource="{Binding AppSettings}"
+					 SelectedItem="{Binding SelectedItem}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Padding="8">
+							<Grid ColumnDefinitions="2*, *">
+								<TextBlock Text="{Binding Name}" />
+								<TextBlock Grid.Column="1"
+										   Text="{Binding Culture}"
+										   Foreground="Gray" />
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+				<!-- Estilos visuais -->
+				<ListBox.Styles>
+
+					<!-- Linhas alternadas -->
+					<Style Selector="ListBoxItem:nth-child(odd) /template/ Border">
+						<Setter Property="Background" Value="#1A000000"/>
+					</Style>
+
+					<!-- Hover -->
+					<Style Selector="ListBoxItem:pointerover /template/ Border">
+						<Setter Property="Background" Value="#333"/>
+					</Style>
+
+					<!-- Selecionado -->
+					<Style Selector="ListBoxItem:selected /template/ Border">
+						<Setter Property="Background" Value="#555"/>
+					</Style>
+
+				</ListBox.Styles>
+
+			</ListBox>
+
+		</Grid>
+
+		<!-- BOTÕES -->
+		<StackPanel Grid.Row="3" Grid.ColumnSpan="2"
+					Orientation="Horizontal"
+					Spacing="12" HorizontalAlignment="Center">
+
+			<Button Content="Add" Command="{Binding AddCommand}" />
+			<Button Content="Update" Command="{Binding UpdateCommand}" />
+			<Button Content="Remove" Command="{Binding DeleteCommand}" />
+			<Button Content="Clear" Command="{Binding ClearCommand}" />
+
+		</StackPanel>
+
+	</Grid>
+
 </UserControl>

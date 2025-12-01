@@ -14,6 +14,8 @@ namespace AutoDoc.UI.Utils
                 .MainWindow!;
         }
 
+        //TODO: Add notification method
+
         public static async Task<string> PickFolderAsync(Window window)
         {
             var topLevel = TopLevel.GetTopLevel(window)!;

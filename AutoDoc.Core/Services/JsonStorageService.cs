@@ -37,6 +37,23 @@ namespace AutoDoc.Core.Services
             await File.WriteAllTextAsync(filePath, json, cancellationToken);
         }
 
+        public static async Task InitializeAsync<T>(string fileName, List<T> datas, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(fileName);
+
+            if (datas is null || datas.Count is 0)
+                return;
+
+            var filePath = GetFilePath(fileName);
+            FileInfo fileInfo = new(filePath);
+
+            if (fileInfo.Exists)
+                return;
+
+            var json = JsonSerializer.Serialize(datas, _jsonSerializerOptions);
+            await File.WriteAllTextAsync(filePath, json, cancellationToken);
+        }
+
         private static string GetFilePath(string fileName)
         {
             ArgumentNullException.ThrowIfNull(fileName);
